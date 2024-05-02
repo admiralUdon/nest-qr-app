@@ -1,6 +1,7 @@
 import { Controller, Get, HttpStatus, Post, Query, Request, Response } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CustomHttpResponse } from 'app/shared/custom/http-response/http-response.service';
+import { AppCode } from 'app/core/types/app.type';
+import { DefaultHttpResponse } from 'app/shared/custom/http-response/default.http-response';
 import { join, resolve } from 'path';
 import * as QRCode from 'qrcode';
 import { QRCodeToFileStreamOptions } from 'qrcode';
@@ -13,19 +14,22 @@ export class QRController {
     @Get("list")
     @ApiOperation({ summary: "Display QR", description: "A simple greeting API that returns a friendly \"QR, World!\" message when accessed. It serves as a basic example or placeholder for API testing and demonstration purposes" })
     getQR(
-        @Request() request, 
+        @Request() request,
+        @Response() response,
         @Query("name") message: string
     ) {
-        const response = new CustomHttpResponse({
-            code: "OK",
-            message: "API call successfull",
-            additionalMessage: "Git Gud",
-            statusCode: HttpStatus.OK,
-            data: {
-                message
-            }
+        // TODO
+
+        const successCode = AppCode.OK;
+        const result = new DefaultHttpResponse({
+            code: successCode.code,
+            message: successCode.description,
+            statusCode: successCode.status,
+            data: {}
         });
-        request.res.statusCode = response.statusCode;
+        
+        response.status(result.statusCode);
+        response.json(result);
         return response;
     }
 
